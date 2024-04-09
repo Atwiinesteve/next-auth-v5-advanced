@@ -16,7 +16,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { register } from "@/actions/register.action";
+import { register } from "@/actions/register";
 import FormError from "../messages/form-error";
 import FormSuccess from "../messages/form-success";
 
