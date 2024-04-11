@@ -2,7 +2,7 @@
  * Public routes are routes that are accessible to everyone without authentication.
  * @type {string[]}
  */
-export const publicRoutes = ["/"];
+export const publicRoutes = ["/", "/auth/new-verification"];
 
 /**
  * Auth routes used to authenticate users. These routes are used to authenticate users.
