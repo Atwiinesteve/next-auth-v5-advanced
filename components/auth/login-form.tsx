@@ -44,7 +44,7 @@ export function LoginForm() {
 			login(values).then((data) => {
 				setError(data?.error);
 				// TODO: To add email verification for success to exist later.
-				// setSuccess(data?.success);
+				setSuccess(data?.success);
 			});
 		});
 	};
