@@ -19,8 +19,14 @@ import { Button } from "../ui/button";
 import { login } from "@/actions/login.action";
 import FormError from "../messages/form-error";
 import FormSuccess from "../messages/form-success";
+import { useSearchParams } from "next/navigation";
 
 export function LoginForm() {
+	const searchParams = useSearchParams();
+	const urlError =
+		searchParams.get("error") === "OAuthAccountNotLinked"
+			? "Email Already in use by another provider"
+			: "";
 	const [error, setError] = React.useState<string | undefined>("");
 	const [success, setSuccess] = React.useState<string | undefined>("");
 	const [isPending, startTransition] = React.useTransition();
@@ -36,11 +42,9 @@ export function LoginForm() {
 		setSuccess("");
 		startTransition(() => {
 			login(values).then((data) => {
-				if ("error" in data) {
-					setError(data.error);
-				} else {
-					setSuccess(data.success);
-				}
+				setError(data?.error);
+				// TODO: To add email verification for success to exist later.
+				// setSuccess(data?.success);
 			});
 		});
 	};
@@ -86,7 +90,7 @@ export function LoginForm() {
 							)}
 						/>
 					</div>
-					<FormError message={error} />
+					<FormError message={error || urlError} />
 					<FormSuccess message={success} />
 					<Button type="submit" className="w-full">
 						Login
