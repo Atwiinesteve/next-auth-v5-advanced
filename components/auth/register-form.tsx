@@ -61,7 +61,12 @@ export function RegisterForm() {
 								<FormItem>
 									<FormLabel>Name</FormLabel>
 									<FormControl>
-										<Input {...field} placeholder="John Doe" type="text" />
+										<Input
+											disabled={isPending}
+											{...field}
+											placeholder="John Doe"
+											type="text"
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -75,6 +80,7 @@ export function RegisterForm() {
 									<FormLabel>Email</FormLabel>
 									<FormControl>
 										<Input
+											disabled={isPending}
 											{...field}
 											placeholder="johndoe@gmail.com"
 											type="email"
@@ -93,7 +99,12 @@ export function RegisterForm() {
 								<FormItem>
 									<FormLabel>Password</FormLabel>
 									<FormControl>
-										<Input {...field} type="password" placeholder="*******" />
+										<Input
+											disabled={isPending}
+											{...field}
+											type="password"
+											placeholder="*******"
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -102,8 +113,12 @@ export function RegisterForm() {
 					</div>
 					<FormError message={error} />
 					<FormSuccess message={success} />
-					<Button type="submit" className="w-full">
-						Register
+					<Button disabled={isPending} type="submit" className="w-full">
+						{isPending ? (
+							<span className="loading loading-spinner loading-sm"></span>
+						) : (
+							"Register"
+						)}
 					</Button>
 				</form>
 			</Form>
