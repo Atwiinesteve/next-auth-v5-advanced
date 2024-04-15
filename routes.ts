@@ -8,7 +8,12 @@ export const publicRoutes = ["/", "/auth/new-verification"];
  * Auth routes used to authenticate users. These routes are used to authenticate users.
  * @type {string[]}
  */
-export const authRoutes = ["/auth/login", "/auth/register", "/auth/error"];
+export const authRoutes = [
+	"/auth/login",
+	"/auth/reset",
+	"/auth/register",
+	"/auth/error",
+];
 
 /**
  * A prefix for all API routes.
