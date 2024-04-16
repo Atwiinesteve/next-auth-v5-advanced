@@ -28,6 +28,7 @@ export function LoginForm() {
 		searchParams.get("error") === "OAuthAccountNotLinked"
 			? "Email Already in use by another provider"
 			: "";
+	const [showTwoFactor, setShowToFactor] = React.useState(false);
 	const [error, setError] = React.useState<string | undefined>("");
 	const [success, setSuccess] = React.useState<string | undefined>("");
 	const [isPending, startTransition] = React.useTransition();
@@ -36,17 +37,30 @@ export function LoginForm() {
 		defaultValues: {
 			email: "",
 			password: "",
+			code: "",
 		},
 	});
 	const onSubmit = (values: z.infer<typeof LoginSchema>) => {
 		setError("");
 		setSuccess("");
 		startTransition(() => {
-			login(values).then((data) => {
-				setError(data?.error);
-				// TODO: To add email verification for success to exist later.
-				setSuccess(data?.success);
-			});
+			login(values)
+				.then((data) => {
+					if (data?.error) {
+						form.reset();
+						setError(data.error);
+					}
+					if (data?.success) {
+						form.reset();
+						setSuccess(data.success);
+					}
+					if (data?.twoFactor) {
+						setShowToFactor(true);
+					}
+				})
+				.catch(() => {
+					setError("Something went wrong.");
+				});
 		});
 	};
 	return (
@@ -57,46 +71,72 @@ export function LoginForm() {
 			showSocial>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-					<div className="space-y-4">
-						<FormField
-							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Email</FormLabel>
-									<FormControl>
-										<Input
-											disabled={isPending}
-											{...field}
-											placeholder="johndoe@gmail.com"
-											type="email"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div className="space-y-4">
-						<FormField
-							control={form.control}
-							name="password"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Password</FormLabel>
-									<FormControl>
-										<Input
-											disabled={isPending}
-											{...field}
-											type="password"
-											placeholder="*******"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+					{!showTwoFactor ? (
+						<>
+							<div className="space-y-4">
+								<FormField
+									control={form.control}
+									name="email"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Email</FormLabel>
+											<FormControl>
+												<Input
+													disabled={isPending}
+													{...field}
+													placeholder="johndoe@gmail.com"
+													type="email"
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+							<div className="space-y-4">
+								<FormField
+									control={form.control}
+									name="password"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Password</FormLabel>
+											<FormControl>
+												<Input
+													disabled={isPending}
+													{...field}
+													type="password"
+													placeholder="*******"
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</>
+					) : (
+						<>
+							<div className="space-y-4">
+								<FormField
+									control={form.control}
+									name="code"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Two Factor Code</FormLabel>
+											<FormControl>
+												<Input
+													disabled={isPending}
+													{...field}
+													placeholder="123456789"
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
+						</>
+					)}
 					<Button variant="link" className="px-0 font-normal" size="sm" asChild>
 						<Link href="/auth/reset">Forgot Password ?</Link>
 					</Button>
@@ -106,7 +146,7 @@ export function LoginForm() {
 						{isPending ? (
 							<span className="loading loading-spinner loading-sm"></span>
 						) : (
-							"Login"
+							<>{showTwoFactor ? "Confirm" : "Login"}</>
 						)}
 					</Button>
 				</form>
