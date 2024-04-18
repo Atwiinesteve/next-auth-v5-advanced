@@ -21,7 +21,7 @@ export default async function RootLayout({
 	const session = await auth();
 	return (
 		<SessionProvider session={session}>
-			<html lang="en">
+			<html lang="en" suppressHydrationWarning={true}>
 				<body className={lexend_deca.className}>
 					{children}
 					<Toaster />
